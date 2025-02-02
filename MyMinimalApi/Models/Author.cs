@@ -1,7 +1,7 @@
 [Index(nameof(FirstName), nameof(LastName), IsUnique = true)]
 public class Author
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = new();
 
     [Required]
     public required string FirstName { get; set; }

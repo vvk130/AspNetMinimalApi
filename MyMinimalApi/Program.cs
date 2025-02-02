@@ -17,5 +17,6 @@ app.UseSwaggerUI();
 app.UseStatusCodePages();
 
 app.MapBookApi();
+app.MapAuthorApi();
 
 app.Run();
