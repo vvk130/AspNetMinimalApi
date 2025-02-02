@@ -9,7 +9,7 @@ public static class BookApi
         app.MapPost("/books/", CreateBookForAuthor);
     }
 
-    public static async Task<Results<Created, NotFound>> CreateBookForAuthor(
+    public static async Task<Results<Created, NotFound<ProblemDetails>>> CreateBookForAuthor(
         MyDbContext context,
         [FromBody] BookRequest bookRequest
     )
@@ -20,7 +20,9 @@ public static class BookApi
         );
 
         if (author is null)
-            return TypedResults.NotFound();
+            return TypedResults.NotFound<ProblemDetails>(new (){
+                Detail = "Book can only be created for an existing author"
+            });
 
         var book = new Book()
         {
