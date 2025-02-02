@@ -1,5 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 
+var dbUrl = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<MyDbContext>(options =>
+    options.UseNpgsql(dbUrl));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
