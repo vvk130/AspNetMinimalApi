@@ -18,7 +18,7 @@ public class Author
 }
 
 [ComplexType]
-public class Address
+public record Address
 {
     [Required]
     [MaxLength(100)]

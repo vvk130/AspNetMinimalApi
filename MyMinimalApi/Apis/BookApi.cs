@@ -10,13 +10,6 @@ public static class BookApi
         app.MapDelete("/books/", DeleteBookByName)
             .WithName("DeleteBookByTitle")
             .WithSummary("Give a book title to delete it");
-        // app.MapGet("/books/", async (MyDbContext context) =>
-        // {
-        //         var authors = await context
-        //             .Books.Select(b => new { Name = $"{b.Title} by {b.Author.LastName}" })
-        //             .ToListAsync();
-        //         return authors.Any() ? Results.Ok(authors) : Results.NotFound("No authors found.");
-        // });
         app.MapGet("/books/", GetPaginatedBooks);
     }
 
