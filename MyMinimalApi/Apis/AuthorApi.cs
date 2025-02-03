@@ -4,14 +4,7 @@ public static class AuthorApi
 {
     public static void MapAuthorApi(this WebApplication app)
     {
-        app.MapGet(
-            "/authors",
-            async (MyDbContext context) =>
-            {
-                var authors = await context.Author.ToListAsync();
-                return authors.Any() ? Results.Ok(authors) : Results.NotFound("No authors found.");
-            }
-        );
+        app.MapGet("/authors", GetPaginatedAuthors);
         app.MapPut("/authors/{id}/address", UpdateAuthorAddress);
     }
 
@@ -29,5 +22,18 @@ public static class AuthorApi
         author.Address = author.Address with { StreetNameAndNumber = StreetNameAndNumberRequest };
         await context.SaveChangesAsync();
         return TypedResults.Ok();
+    }
+
+    public static async Task<Ok<PaginatedList<Author>>> GetPaginatedAuthors(
+        MyDbContext context,
+        [AsParameters] PaginationRequest paginationRequest
+    )
+    {
+        var size = paginationRequest.PageSize;
+        var index = paginationRequest.Index;
+
+        var authors = await context.Author.Order().Skip(size * index).Take(size).ToListAsync();
+
+        return TypedResults.Ok(new PaginatedList<Author>(index, size, authors));
     }
 }
