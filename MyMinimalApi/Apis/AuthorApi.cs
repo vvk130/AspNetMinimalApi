@@ -4,7 +4,7 @@ public static class AuthorApi
     {
         app.MapGet("/authors", async (MyDbContext context) =>
         {
-            var authors = await context.Books.ToListAsync();
+            var authors = await context.Author.ToListAsync();
             return authors.Any() ? Results.Ok(authors) : Results.NotFound("No authors found.");
         });
     }

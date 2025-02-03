@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,14 @@ public static class BookApi
     {
         app.MapPost("/books/", CreateBookForAuthor);
         app.MapDelete("/books/", DeleteBookByName);
+        // app.MapGet("/books/", async (MyDbContext context) =>
+        // {
+        //         var authors = await context
+        //             .Books.Select(b => new { Name = $"{b.Title} by {b.Author.LastName}" })
+        //             .ToListAsync();
+        //         return authors.Any() ? Results.Ok(authors) : Results.NotFound("No authors found.");
+        // });
+        app.MapGet("/books/", GetPaginatedBooks);
     }
 
     public static async Task<Results<Created, NotFound<ProblemDetails>>> CreateBookForAuthor(
@@ -51,4 +60,18 @@ public static class BookApi
         await context.SaveChangesAsync();
         return TypedResults.NoContent();
     }
+
+    public static async Task<Ok<PaginatedList<Book>>> GetPaginatedBooks(
+        MyDbContext context,
+        [AsParameters] PaginationRequest paginationRequest
+    )
+    {
+        var size = paginationRequest.PageSize;
+        var index = paginationRequest.Index;
+
+        var books = await context.Books.Order().Skip(size * index).Take(size).ToListAsync();
+
+        return TypedResults.Ok(new PaginatedList<Book>(index, size, books));
+    }
+
 }
