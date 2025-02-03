@@ -7,7 +7,9 @@ public static class BookApi
     public static void MapBookApi(this WebApplication app)
     {
         app.MapPost("/books/", CreateBookForAuthor);
-        app.MapDelete("/books/", DeleteBookByName);
+        app.MapDelete("/books/", DeleteBookByName)
+            .WithName("DeleteBookByTitle")
+            .WithSummary("Give a book title to delete it");
         // app.MapGet("/books/", async (MyDbContext context) =>
         // {
         //         var authors = await context
