@@ -1,1 +1,8 @@
-public record BookRequest(string Title, AuthorDto AuthorDto, DateTime PublicationDate, Genre Genre);
+public record BookRequest(
+    string Title,
+    AuthorDto AuthorDto,
+    DateTime PublicationDate,
+    Genre Genre,
+    int Stock,
+    decimal Price
+);

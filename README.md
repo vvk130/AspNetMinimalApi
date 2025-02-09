@@ -4,3 +4,8 @@ New EF Core features featured
 
 - Complex types (Author Address Update endpoint)
 - Automatic ordering by primary key (Order()) (Paginated Books endpoint)
+
+Other features utilized:
+
+- Using Database Transactions for payments
+- Using library to provide Validation Errors combatible with TypedResults: https://github.com/Carl-Hugo/FluentValidation.AspNetCore.Http

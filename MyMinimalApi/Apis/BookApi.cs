@@ -6,7 +6,7 @@ public static class BookApi
 {
     public static void MapBookApi(this WebApplication app)
     {
-        app.MapPost("/books/", CreateBookForAuthor);
+        app.MapPost("/books/", CreateBookForAuthor).AddFluentValidationFilter();
         app.MapDelete("/books/", DeleteBookByName)
             .WithName("DeleteBookByTitle")
             .WithSummary("Give a book title to delete it");
@@ -14,8 +14,9 @@ public static class BookApi
     }
 
     public static async Task<Results<Created, NotFound<ProblemDetails>>> CreateBookForAuthor(
+        [FromBody] BookRequest bookRequest,
         MyDbContext context,
-        [FromBody] BookRequest bookRequest)
+        IValidator<BookRequest> validator)
     {
         var author = await context.Author.FirstOrDefaultAsync(a =>
             a.FirstName == bookRequest.AuthorDto.FirstName
@@ -34,6 +35,8 @@ public static class BookApi
             Author = author,
             PublicationDate = bookRequest.PublicationDate,
             Genre = bookRequest.Genre,
+            Stock = bookRequest.Stock,
+            Price = bookRequest.Price,
         };
 
         context.Books.Add(book);

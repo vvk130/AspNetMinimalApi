@@ -1,5 +1,8 @@
+
+using System.Text.RegularExpressions;
+
 [Index(nameof(FirstName), nameof(LastName), IsUnique = true)]
-public class Author
+public class Author 
 {
     public Guid Id { get; set; } = new();
 
@@ -14,7 +17,8 @@ public class Author
 
     public string? Biography { get; set; }
 
-    public List<Book> Books { get; set; } = [];
+    public decimal Wallet { get; set; } = 0.00m;
+
 }
 
 [ComplexType]

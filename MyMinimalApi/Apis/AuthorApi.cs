@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-
 public static class AuthorApi
 {
     public static void MapAuthorApi(this WebApplication app)
@@ -10,11 +8,14 @@ public static class AuthorApi
 
     private static async Task<Results<Ok, NotFound>> UpdateAuthorAddress(
         MyDbContext context,
-        Guid Id,
+        string firstName,
+        string lastName,
         string StreetNameAndNumberRequest
     )
     {
-        var author = await context.Author.FirstOrDefaultAsync(a => a.Id == Id);
+        var author = await context
+            .Author.Where(a => a.FirstName == firstName && a.LastName == lastName)
+            .FirstOrDefaultAsync();
 
         if (author is null)
             return TypedResults.NotFound();
@@ -36,4 +37,5 @@ public static class AuthorApi
 
         return TypedResults.Ok(new PaginatedList<Author>(index, size, authors));
     }
+
 }

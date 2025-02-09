@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyMinimalApi.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209110448_AddWalletToAuthor")]
+    partial class AddWalletToAuthor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,9 +104,6 @@ namespace MyMinimalApi.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
-
                     b.ToTable("Books");
                 });
 
@@ -133,33 +133,10 @@ namespace MyMinimalApi.Migrations
                     b.ToTable("BookReviews");
                 });
 
-            modelBuilder.Entity("Purchase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BuyerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.ToTable("Purchases");
-                });
-
             modelBuilder.Entity("Book", b =>
                 {
                     b.HasOne("Author", "Author")
-                        .WithMany()
+                        .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -176,6 +153,11 @@ namespace MyMinimalApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("Author", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }
