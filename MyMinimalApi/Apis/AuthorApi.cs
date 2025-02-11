@@ -3,7 +3,7 @@ public static class AuthorApi
     public static void MapAuthorApi(this WebApplication app)
     {
         app.MapGet("/authors", GetPaginatedAuthors);
-        app.MapGet("/authors/{id}/totalMoneySpent", GetTotalMoneySpentByAuthorId);
+        app.MapGet("/authors/totalMoneySpent", GetTotalMoneySpentByAuthorId);
         app.MapPut("/authors/{id}/address", UpdateAuthorAddress);
     }
 
