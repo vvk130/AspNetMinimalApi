@@ -10,6 +10,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy.WithOrigins("https://example.com")  
+              .AllowAnyMethod()                    
+              .AllowAnyHeader();                  
+    });
+});
+
 var app = builder.Build();
 
 app.UseSwagger();
