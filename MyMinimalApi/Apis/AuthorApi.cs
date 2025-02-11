@@ -3,6 +3,7 @@ public static class AuthorApi
     public static void MapAuthorApi(this WebApplication app)
     {
         app.MapGet("/authors", GetPaginatedAuthors);
+        app.MapGet("/authors/{id}/totalMoneySpent", GetTotalMoneySpentByAuthorId);
         app.MapPut("/authors/{id}/address", UpdateAuthorAddress);
     }
 
@@ -34,8 +35,7 @@ public static class AuthorApi
         var index = paginationRequest.Index;
 
         var authors = await context
-            .Author
-            .OrderBy(b => b.LastName)
+            .Author.OrderBy(b => b.LastName)
             .Select(b => new AuthorDtoWithId(b.Id, b.FirstName, b.LastName))
             .Skip(size * index)
             .Take(size)
@@ -44,4 +44,25 @@ public static class AuthorApi
         return TypedResults.Ok(new PaginatedList<AuthorDtoWithId>(index, size, authors));
     }
 
+    private static async Task<Results<Ok<decimal>, NotFound>> GetTotalMoneySpentByAuthorId(
+        MyDbContext context,
+        string firstName,
+        string lastName
+    )
+    {
+        var author = await context
+            .Author.Where(a => a.FirstName == firstName && a.LastName == lastName)
+            .FirstOrDefaultAsync();
+
+        if (author is null)
+            return TypedResults.NotFound();
+
+        var totalSpent = await context
+            .Purchases
+            .Where(p => p.BuyerId == author.Id)
+            .SumAsync(p => p.Price);
+
+        await context.SaveChangesAsync();
+        return TypedResults.Ok(totalSpent);
+    }
 }
