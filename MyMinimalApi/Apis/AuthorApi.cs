@@ -25,7 +25,7 @@ public static class AuthorApi
         return TypedResults.Ok();
     }
 
-    public static async Task<Ok<PaginatedList<Author>>> GetPaginatedAuthors(
+    public static async Task<Ok<PaginatedList<AuthorDtoWithId>>> GetPaginatedAuthors(
         MyDbContext context,
         [AsParameters] PaginationRequest paginationRequest
     )
@@ -33,9 +33,15 @@ public static class AuthorApi
         var size = paginationRequest.PageSize;
         var index = paginationRequest.Index;
 
-        var authors = await context.Author.Order().Skip(size * index).Take(size).ToListAsync();
+        var authors = await context
+            .Author
+            .OrderBy(b => b.LastName)
+            .Select(b => new AuthorDtoWithId(b.Id, b.FirstName, b.LastName))
+            .Skip(size * index)
+            .Take(size)
+            .ToListAsync();
 
-        return TypedResults.Ok(new PaginatedList<Author>(index, size, authors));
+        return TypedResults.Ok(new PaginatedList<AuthorDtoWithId>(index, size, authors));
     }
 
 }

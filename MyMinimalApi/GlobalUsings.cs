@@ -8,3 +8,6 @@ global using Microsoft.AspNetCore.Http.HttpResults;
 global using Microsoft.AspNetCore.Mvc;
 global using FluentValidation;
 global using FluentValidation.AspNetCore.Http;
+// global using Microsoft.AspNetCore.Identity;
+// global using Microsoft.AspNetCore.Identity.ApiEndpoints;
+// global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

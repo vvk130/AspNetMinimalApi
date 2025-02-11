@@ -2,7 +2,7 @@ public static class PurchaseApi
 {
     public static void MapPurchaseApi(this WebApplication app)
     {
-        app.MapPost("/authors/{bookId}/purchase", BuyBookById);
+        app.MapPost("/authors/{bookId}/purchase", BuyBookById).AddFluentValidationFilter();
         app.MapGet("/purchases/", GetPaginatedPurchases);
     }
 
@@ -71,11 +71,11 @@ public static class PurchaseApi
         {
             await context
                 .Books.Where(b => b.Id == bookId && b.Stock >= 1)
-                .ExecuteUpdateAsync(setters => setters.SetProperty(b => b.Stock, book.Stock-1));
+                .ExecuteUpdateAsync(setters => setters.SetProperty(b => b.Stock, book.Stock - 1));
             await context
                 .Author.Where(a => a.Id == author.Id && a.Wallet >= book.Price)
                 .ExecuteUpdateAsync(setters =>
-                    setters.SetProperty(a => a.Wallet, author.Wallet-book.Price)
+                    setters.SetProperty(a => a.Wallet, author.Wallet - book.Price)
                 );
 
             var purchase = new Purchase()

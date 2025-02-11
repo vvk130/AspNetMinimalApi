@@ -16,7 +16,8 @@ public static class BookApi
     public static async Task<Results<Created, NotFound<ProblemDetails>>> CreateBookForAuthor(
         [FromBody] BookRequest bookRequest,
         MyDbContext context,
-        IValidator<BookRequest> validator)
+        IValidator<BookRequest> validator
+    )
     {
         var author = await context.Author.FirstOrDefaultAsync(a =>
             a.FirstName == bookRequest.AuthorDto.FirstName
@@ -59,7 +60,7 @@ public static class BookApi
         return TypedResults.NoContent();
     }
 
-    public static async Task<Ok<PaginatedList<Book>>> GetPaginatedBooks(
+    public static async Task<Ok<PaginatedList<BookDto>>> GetPaginatedBooks(
         MyDbContext context,
         [AsParameters] PaginationRequest paginationRequest
     )
@@ -67,9 +68,15 @@ public static class BookApi
         var size = paginationRequest.PageSize;
         var index = paginationRequest.Index;
 
-        var books = await context.Books.Order().Skip(size * index).Take(size).ToListAsync();
+        var books = await context
+            .Books
+            .OrderBy(b => b.Title)
+            .Select(b => new BookDto(b.Id, b.Title))
+            .Skip(size * index)
+            .Take(size)
+            .ToListAsync();
 
-        return TypedResults.Ok(new PaginatedList<Book>(index, size, books));
+        return TypedResults.Ok(new PaginatedList<BookDto>(index, size, books));
     }
 
 }
