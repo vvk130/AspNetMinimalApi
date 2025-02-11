@@ -10,3 +10,4 @@ Other features utilized:
 - Using Database Transactions for payments
 - Using library to provide Validation Errors combatible with TypedResults: https://github.com/Carl-Hugo/FluentValidation.AspNetCore.Http
 - FluentValidation
+- Response caching (7 sec)
