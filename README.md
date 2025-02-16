@@ -11,5 +11,6 @@ Other features utilized:
 - Using library to provide Validation Errors combatible with TypedResults: https://github.com/Carl-Hugo/FluentValidation.AspNetCore.Http
 - FluentValidation (So I started using the MVC errors and changed to Fluent, so both are featured!)
 - Response caching (7 sec)
-- Immutable classes used as paginated responses (Optimal choice to ensure thredsafe caching), otherwise utilizing records as dto
+- Immutable classes used as paginated responses (Optimal choice to ensure thredsafe caching), otherwise utilizing records as dtos
+- Using Enumerable (instead of ReadOnlyList) to ensure backwards compability, if needed
 - Manual dto mapping (with Select statement to prevent bloating the payload)
