@@ -1,3 +1,5 @@
+using System.Linq;
+
 public static class AuthorApi
 {
     public static void MapAuthorApi(this WebApplication app)
@@ -34,15 +36,20 @@ public static class AuthorApi
         var size = paginationRequest.PageSize;
         var index = paginationRequest.Index;
 
-        var authors = await context
-            .Author.OrderBy(b => b.LastName)
-            .Select(b => new AuthorDtoWithId(b.Id, b.FirstName, b.LastName))
-            .Skip(size * index)
-            .Take(size)
-            .ToListAsync();
+        var authors = await context.Author.ApplyPaginationAsync(index, size);
 
-        return TypedResults.Ok(new PaginatedList<AuthorDtoWithId>(index, size, authors));
+        var finalAuthors = authors
+            .Select(b => new AuthorDtoWithId(b.Id, b.FirstName, b.LastName))
+            .ToList();
+
+        return TypedResults.Ok(new PaginatedList<AuthorDtoWithId>(index, size, finalAuthors));
     }
+
+    public static async Task<IQueryable<T>> ApplyPaginationAsync<T>(
+        this IQueryable<T> query,
+        int index,
+        int size
+    ) => query.Order().Skip(size * index).Take(size);
 
     private static async Task<Results<Ok<decimal>, NotFound>> GetTotalMoneySpentByAuthorId(
         MyDbContext context,
@@ -58,8 +65,7 @@ public static class AuthorApi
             return TypedResults.NotFound();
 
         var totalSpent = await context
-            .Purchases
-            .Where(p => p.BuyerId == author.Id)
+            .Purchases.Where(p => p.BuyerId == author.Id)
             .SumAsync(p => p.Price);
 
         await context.SaveChangesAsync();

@@ -1,6 +1,4 @@
 
-using System.Text.RegularExpressions;
-
 [Index(nameof(FirstName), nameof(LastName), IsUnique = true)]
 public class Author 
 {
